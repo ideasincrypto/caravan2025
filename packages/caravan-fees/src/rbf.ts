@@ -1,16 +1,17 @@
-import { TransactionAnalyzer } from "./transactionAnalyzer";
-import { BtcTransactionTemplate } from "./btcTransactionTemplate";
+import { BigNumber } from "bignumber.js";
+
 import {
   BtcTxInputTemplate,
   BtcTxOutputTemplate,
 } from "./btcTransactionComponents";
+import { BtcTransactionTemplate } from "./btcTransactionTemplate";
+import { TransactionAnalyzer } from "./transactionAnalyzer";
 import {
   FeeBumpStrategy,
   CancelRbfOptions,
   AcceleratedRbfOptions,
   UTXO,
 } from "./types";
-import BigNumber from "bignumber.js";
 
 /**
  * RBF (Replace-By-Fee) Transaction Creation
@@ -280,6 +281,7 @@ export const createCancelRbfTransaction = (
     scriptType: options.scriptType,
     requiredSigners: options.requiredSigners,
     totalSigners: options.totalSigners,
+    ...(options.globalXpubs && { globalXpubs: options.globalXpubs }), // Only add if user-code provides us globalXpubs
   });
 
   // Step 4: Add inputs from the original transaction
@@ -419,6 +421,7 @@ export const createAcceleratedRbfTransaction = (
     scriptType: options.scriptType,
     requiredSigners: options.requiredSigners,
     totalSigners: options.totalSigners,
+    ...(options.globalXpubs && { globalXpubs: options.globalXpubs }), // Only add if user-code provides us globalXpubs
   });
 
   // Step 5: Add inputs from the original transaction

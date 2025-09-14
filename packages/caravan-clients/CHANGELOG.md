@@ -1,5 +1,62 @@
 # @caravan/clients
 
+## 0.6.1
+
+### Patch Changes
+
+- [#364](https://github.com/caravan-bitcoin/caravan/pull/364) [`625191d`](https://github.com/caravan-bitcoin/caravan/commit/625191ddc8e1ddb1292c033448fee4fd77007aa6) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - Add getFeesForPendingTransaction to retrieve the fee information for a pending (incoming) transaction .
+
+## 0.6.0
+
+### Minor Changes
+
+- [#340](https://github.com/caravan-bitcoin/caravan/pull/340) [`d068e4e`](https://github.com/caravan-bitcoin/caravan/commit/d068e4e7c0203abe2ceafc079588c1ce37251d2a) Thanks [@ice-009](https://github.com/ice-009)! - Added the Address Transaction History function to the package
+
+## 0.5.1
+
+### Patch Changes
+
+- [#329](https://github.com/caravan-bitcoin/caravan/pull/329) [`65344a9`](https://github.com/caravan-bitcoin/caravan/commit/65344a9f5890b93f4833514a3f7d331458344ab5) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - minor change to `getTransactionHex` and exported `TransactionDetails` type , needed for RBF PR changes
+
+- Updated dependencies [[`d0d2d1d`](https://github.com/caravan-bitcoin/caravan/commit/d0d2d1df159a6ca6e049634ead1c5b89060f0e2b)]:
+  - @caravan/bitcoin@0.4.1
+
+## 0.5.0
+
+### Minor Changes
+
+- [#244](https://github.com/caravan-bitcoin/caravan/pull/244) [`2fdced3`](https://github.com/caravan-bitcoin/caravan/commit/2fdced3ec1c51ed8df5b5d91f88386cb2302bb94) Thanks [@waldenraines](https://github.com/waldenraines)! - separate public/private and blockchain explorer concerns
+
+## 0.4.1
+
+### Patch Changes
+
+- [#225](https://github.com/caravan-bitcoin/caravan/pull/225) [`049d730`](https://github.com/caravan-bitcoin/caravan/commit/049d730f0dc1bac7ba854f26192ca79afa03afe9) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - Value Column Integration for Transaction Table
+
+## 0.4.0
+
+### Minor Changes
+
+- [#206](https://github.com/caravan-bitcoin/caravan/pull/206) [`08a485d`](https://github.com/caravan-bitcoin/caravan/commit/08a485d382847d1af234ebb0f37628e12f4186e7) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - Add a new method `getWalletTransaction` in BlockchainClient and `bitcoindGetWalletTransaction` in wallet methods
+
+## 0.3.2
+
+### Patch Changes
+
+- [#168](https://github.com/caravan-bitcoin/caravan/pull/168) [`accc093`](https://github.com/caravan-bitcoin/caravan/commit/accc0937159691e7be5b0b68c389ee6594423aa4) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - Patch: align client.getTransaction method implementation with bitcoindRawTxData response
+
+## 0.3.1
+
+### Patch Changes
+
+- [#196](https://github.com/caravan-bitcoin/caravan/pull/196) [`509436c`](https://github.com/caravan-bitcoin/caravan/commit/509436cf299ee83de481557928eb8638b20ec62e) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - fix: Private node transaction RPC call by aligning client.getTransaction method implementation with bitcoindRawTxData response
+
+## 0.3.0
+
+### Minor Changes
+
+- [#134](https://github.com/caravan-bitcoin/caravan/pull/134) [`c220696`](https://github.com/caravan-bitcoin/caravan/commit/c220696fa16c9663995835a96a5a56c88977cc8e) Thanks [@Legend101Zz](https://github.com/Legend101Zz)! - Add getTransaction method to BlockchainClient and migrate files (blockchain.js, block_explorer.ts,bitcoind.js) to TypeScript
+
 ## 0.2.0
 
 ### Minor Changes

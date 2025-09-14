@@ -21,18 +21,19 @@
  * @module fixtures
  */
 
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
+
+import { braidConfig } from "./braid";
+import { sortInputs } from "./inputs";
 import {
   generateMultisigFromPublicKeys,
   multisigRedeemScript,
   multisigWitnessScript,
 } from "./multisig";
-import { sortInputs } from "./inputs";
+import { Network } from "./networks";
 import { P2SH } from "./p2sh";
 import { P2SH_P2WSH } from "./p2sh_p2wsh";
 import { P2WSH } from "./p2wsh";
-import { Network } from "./networks";
-import { braidConfig } from "./braid";
 
 // Without this, BigNumber will report strings as exponentials. 16 places covers
 // all possible values in satoshis.
@@ -104,7 +105,7 @@ const NODES = {
     upub: "upub5DhVaiY2dTMshxGyE6dZpa6d1d18FoFhMDynSRqRguJge7uAdF7ZGRGAW8yewCq9iW87Pti4RHhXC4mFLf88rdXd7pXMjy3wAjFmK6jyHiX",
     vpub: "vpub5YXktPCwn8uMZFU64TRC2fC8Bb9aCRFCGLW1DpjK4ugZhDiPsuH7tUvJXLwEw7V589Ev9NJcsx455MNp4MY9esDDzADnKssRSTKQhgCrtoZ",
     Upub: "Upub5QbahxGUCQvF8XSMAm6YeeSRjR3PU9wHfVdTMh6y4g96GJU5PeVqMY86Jqw8Ve43wyC6GUiBJW62KEP1dtH617eHxHdm9NWw4TXdu1aWzdx",
-    Jpub: "Vpub5jRr1cwPM6TiypdU17tArjXvuPBqQmvnac9g95zrSgWyKQHJeJfPybnEL3tiVYhyMcJu1xJjmASaCWzaMah6oMKtpdLBjHLRLBbHHcy3jDH",
+    Vpub: "Vpub5jRr1cwPM6TiypdU17tArjXvuPBqQmvnac9g95zrSgWyKQHJeJfPybnEL3tiVYhyMcJu1xJjmASaCWzaMah6oMKtpdLBjHLRLBbHHcy3jDH",
     chaincode:
       "470bb034dbc8e7b5f5c0b19f747e3e768f0cc9ff298361b2741e1b7fd70d376d",
     parentFingerprint: 1240308660,
@@ -173,6 +174,7 @@ const NODES = {
   "m/45'/0": {
     pub: "02b04ac39b566b7353b5bf8e164be83bf90b090e7516170e88a8cb6c88a860f0a3",
     tpub: "tpubDBAj15fFkLimiBmDqapikSS4qkmvAS8LijMey9S9fAyjq65ERgjuzaa6GonVQXugcrBzfpEoH6SPBzevfowZgYJ3apWcHbMPaNJnBRkbsRY",
+    xpub: "xpub6Ao6Uqqa34mKSPaNPPqdYX6hWdgGB3dHB6mMcbP1KGDr5oQXMTtpr8uG2mhht2xSpwf64EivjzcLVpAKGx6Ko6qkXDmJc4h9zQiNRS5g9Cu",
     rootFingerprint: ROOT_FINGERPRINT,
   },
   "m/45'/0/0": {
@@ -479,7 +481,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/0",
             pubkey: Buffer.from(
               "02a8513d9931896d5d3afc8063148db75d8851fd1fc41b1098ba2a6a766db563d4",
-              "hex"
+              "hex",
             ),
           },
           {
@@ -487,7 +489,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/0",
             pubkey: Buffer.from(
               "03938dd09bf3dd29ddf41f264858accfa40b330c98e0ed27caf77734fac00139ba",
-              "hex"
+              "hex",
             ),
           },
         ],
@@ -497,7 +499,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/1",
             pubkey: Buffer.from(
               "0221ee4400a394e44b78592463eb07c9bae0cc9c2b11081be97df15cd561124e19",
-              "hex"
+              "hex",
             ),
           },
           {
@@ -505,7 +507,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/1",
             pubkey: Buffer.from(
               "03f31364b009d8019be56fa2569f336362e3e2b6a809623d87ffbef634ca6e1f27",
-              "hex"
+              "hex",
             ),
           },
         ],
@@ -515,7 +517,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/48349",
             pubkey: Buffer.from(
               "0308e27264d2b28b2e56104b36e562f69414027574998a53674b5db28a649f0f38",
-              "hex"
+              "hex",
             ),
           },
           {
@@ -523,7 +525,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/48349",
             pubkey: Buffer.from(
               "037a911b48783ca769ae273ebe71d3a14d7af2301063c25564155e8764fa77c981",
-              "hex"
+              "hex",
             ),
           },
         ],
@@ -535,7 +537,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/0",
             pubkey: Buffer.from(
               "02a8513d9931896d5d3afc8063148db75d8851fd1fc41b1098ba2a6a766db563d4",
-              "hex"
+              "hex",
             ),
           },
           {
@@ -543,7 +545,7 @@ const BRAIDS = [
             path: "m/45'/1'/100'/0/0",
             pubkey: Buffer.from(
               "03938dd09bf3dd29ddf41f264858accfa40b330c98e0ed27caf77734fac00139ba",
-              "hex"
+              "hex",
             ),
           },
         ],
@@ -1286,7 +1288,7 @@ const MULTISIGS = MULTISIGS_BASE.map((test) => {
     test.network,
     test.type,
     2,
-    ...test.publicKeys
+    ...test.publicKeys,
   );
   braidAwareMultisig = {
     ...multisig,
@@ -1391,7 +1393,7 @@ function singleMultisigTransaction(test) {
 }
 
 const TRANSACTIONS = MULTISIGS.map((test) =>
-  singleMultisigTransaction(test)
+  singleMultisigTransaction(test),
 ).concat([
   // {
   //   ...selectFirstUTXOFromEach(MULTISIGS.filter((test) => test.network === TESTNET)),

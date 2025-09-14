@@ -1,4 +1,7 @@
-/* eslint-disable max-lines*/
+/**
+ * Constant defining Trezor interactions.
+ */
+export const TREZOR = "trezor";
 
 /**
  * Provides classes for interacting with Trezor hardware wallets.
@@ -23,7 +26,6 @@
  * * TrezorSignMultisigTransaction
  * * TrezorConfirmMultisigAddress
  */
-import BigNumber from "bignumber.js";
 import {
   bip32PathToSequence,
   multisigAddress,
@@ -40,8 +42,13 @@ import {
   Network,
 } from "@caravan/bitcoin";
 import { translatePSBT } from "@caravan/psbt";
+import TrezorConnectDefault, {
+  TrezorConnect as TrezorConnectType,
+} from "@trezor/connect-web";
+import { BigNumber } from "bignumber.js";
 import { ECPair, payments, Payment } from "bitcoinjs-lib";
 
+import { MULTISIG_ROOT } from "./constants";
 import {
   DirectKeystoreInteraction,
   PENDING,
@@ -49,12 +56,6 @@ import {
   INFO,
   ERROR,
 } from "./interaction";
-import { MULTISIG_ROOT } from "./index";
-
-/**
- * Constant defining Trezor interactions.
- */
-export const TREZOR = "trezor";
 
 /**
  * What's going on with this TrezorConnect import?
@@ -65,10 +66,6 @@ export const TREZOR = "trezor";
  * the exports.default value and instead falls back to the tsbuild.__exportStar exports. When
  * this happens we need to pull the `TrezorConnect` object from the default property of the module.
  */
-import TrezorConnectDefault, {
-  TrezorConnect as TrezorConnectType,
-} from "@trezor/connect-web";
-
 let TrezorConnect: TrezorConnectType & { default?: TrezorConnectType } =
   TrezorConnectDefault;
 
@@ -119,22 +116,30 @@ const ENV_TREZOR_BLOCKBOOK_URL =
   env_variables.VITE_TREZOR_BLOCKBOOK_URL;
 
 const TREZOR_CONNECT_URL =
-  ENV_TREZOR_CONNECT_URL || `https://${window.location.hostname}:8088/`;
+  ENV_TREZOR_CONNECT_URL ||
+  (typeof window === "undefined" ? "" : "https://connect.trezor.io/9.6.0/");
 const TREZOR_BLOCKBOOK_URL =
-  ENV_TREZOR_BLOCKBOOK_URL || `http://${window.location.hostname}:3035/`;
+  ENV_TREZOR_BLOCKBOOK_URL ||
+  (typeof window === "undefined"
+    ? ""
+    : `http://${window?.location.hostname}:3035/`);
 
 const TREZOR_DEV =
   env_variables.TREZOR_DEV ||
   env_variables.REACT_APP_TREZOR_DEV ||
   env_variables.VITE_TREZOR_DEV;
 
+const TREZOR_APP_NAME = env_variables.TREZOR_APP_NAME || "Caravan";
+
 try {
   TrezorConnect.init({
     connectSrc: TREZOR_DEV
       ? TREZOR_CONNECT_URL
-      : "https://connect.trezor.io/9.1.9/", // pinning to this connect version to avoid backwards incompatible changes
+      : "https://connect.trezor.io/9.6.0/", // pinning to this connect version to avoid backwards incompatible changes
+    coreMode: "auto", // default value still required to enable WebUSB support
     lazyLoad: true, // this param prevents iframe injection until a TrezorConnect.method is called
     manifest: {
+      appName: TREZOR_APP_NAME,
       email: "help@unchained.com",
       appUrl: "https://github.com/caravan-bitcoin/caravan",
     },
@@ -1098,6 +1103,7 @@ function trezorInput(input, bip32Path) {
     prev_hash: input.txid,
     prev_index: input.index,
     address_n: bip32PathToSequence(bip32Path),
+    sequence: input.sequence,
     ...(input.amountSats && {
       amount: new BigNumber(input.amountSats).toString(),
     }),

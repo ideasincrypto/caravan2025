@@ -14,15 +14,22 @@ export default defineConfig({
   assetsInclude: ["**/*.wasm"],
   resolve: {
     alias: {
+      // TODO: figure out why special symbol aliases won't work with eslint
       utils: path.resolve(__dirname, "./src/utils"),
+      selectors: path.resolve(__dirname, "./src/selectors"),
+      clients: path.resolve(__dirname, "./src/clients"),
+      hooks: path.resolve(__dirname, "./src/hooks"),
     },
   },
   plugins: [
-    wasm(),
-    react(),
     nodePolyfills({
       protocolImports: true,
+      globals: {
+        Buffer: true,
+      },
     }),
+    wasm(),
+    react(),
   ],
   build: {
     target: "esnext", // browsers can handle the latest ES features

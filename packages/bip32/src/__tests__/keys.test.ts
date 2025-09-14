@@ -1,5 +1,6 @@
-import { Network, TEST_FIXTURES } from "@caravan/bitcoin";
+import { ExtendedPublicKey, Network, TEST_FIXTURES } from "@caravan/bitcoin";
 import { Bip32Derivation } from "bip174/src/lib/interfaces";
+import { Mock } from "vitest";
 
 import {
   getBlindedXpub,
@@ -25,6 +26,12 @@ const testChildDerivation = {
   ),
 } as unknown as Bip32Derivation;
 
+const depthTestCases = [
+  { path: "m/45'", expected: "m/0" },
+  { path: "m/45'/0", expected: "m/0/0" },
+  { path: "m/45'/0'/0'", expected: "m/0/0/0" }
+];
+
 describe("getMaskedKeyOrigin", () => {
   it("should return the masked origin", () => {
     const masked = getMaskedKeyOrigin(globalOrigin.xpub);
@@ -34,6 +41,37 @@ describe("getMaskedKeyOrigin", () => {
       rootFingerprint: "86bd941f",
     });
   });
+
+  it.each(depthTestCases)("should handle testnet xpub with depth $path -> $expected", ({ path, expected }) => {
+    const nodes = TEST_FIXTURES.keys.open_source.nodes;
+    const depthNode = nodes[path];
+    const parentFingerprint = ExtendedPublicKey.fromBase58(depthNode.tpub).parentFingerprint?.toString(16);
+    const masked = getMaskedKeyOrigin(depthNode.tpub);
+    
+    expect(masked).toEqual({
+      xpub: depthNode.tpub,
+      bip32Path: expected,
+      rootFingerprint: parentFingerprint
+    });
+  });
+
+  it.each(depthTestCases)("should handle mainnet xpub with depth $path -> $expected", ({ path, expected }) => {
+    const nodes = TEST_FIXTURES.keys.open_source.nodes;
+    const depthNode = nodes[path];
+    const parentFingerprint = ExtendedPublicKey.fromBase58(depthNode.xpub).parentFingerprint?.toString(16);
+    const masked = getMaskedKeyOrigin(depthNode.xpub);
+    
+    expect(masked).toEqual({
+      xpub: depthNode.xpub,
+      bip32Path: expected,
+      rootFingerprint: parentFingerprint
+    });
+  });
+
+  it("should throw an error for an invalid xpub", () => {
+    const invalidXpub = "invalid-xpub-str";
+    expect(() => getMaskedKeyOrigin(invalidXpub)).toThrow();
+  })
 });
 
 describe("isValidChildPubKey", () => {
@@ -95,11 +133,12 @@ describe("setXpubNetwork", () => {
   });
 });
 
-jest.mock("../paths", () => {
+vi.mock("../paths", async () => {
+  const actual = await vi.importActual("../paths");
   return {
     __esModule: true,
-    ...jest.requireActual("../paths"),
-    secureSecretPath: jest.fn(),
+    ...actual,
+    secureSecretPath: vi.fn(),
   };
 });
 
@@ -113,23 +152,37 @@ describe("getRandomChildXpub", () => {
     // depth below the parent path
     childPath = "m/45'/0'/0'/0/0";
     child = nodes["m/45'/0'/0'/0/0"];
-    (mockPaths.secureSecretPath as jest.Mock).mockReturnValue("m/0/0");
+    (mockPaths.secureSecretPath as Mock).mockReturnValue("m/0/0");
   });
 
-  afterAll(jest.restoreAllMocks);
+  afterAll(vi.restoreAllMocks);
   it("should return a random child xpub", async () => {
     const keyOrigin = {
       xpub: parent.xpub,
       bip32Path: parentPath,
-      rootFingerprint: parent.fingerprint,
+      rootFingerprint: parent.rootFingerprint,
     };
     const actual = await getRandomChildXpub(keyOrigin, depth);
     expect(actual).toEqual({
       xpub: child.xpub,
       bip32Path: childPath,
-      rootFingerprint: child.fingerprint,
+      rootFingerprint: child.rootFingerprint,
     });
     expect(mockPaths.secureSecretPath).toHaveBeenCalledWith(depth);
+  });
+  it("should handle mixed hardened/non-hardened paths", async () => {
+    const mixedOrigin: KeyOrigin = {
+      xpub: parent.xpub,
+      bip32Path: "m/44'/0/0",
+      rootFingerprint: parent.rootFingerprint,
+    };
+    (mockPaths.secureSecretPath as Mock).mockReturnValue("m/0/0");
+    const result = await getRandomChildXpub(mixedOrigin, 2);
+    expect(result).toEqual({
+      bip32Path: "m/44'/0/0/0/0",
+      xpub: "xpub6FjSpitFpSJB9BpSVwp3eJzhpaQFLbLefD1f3qaGRmok2Z2FDeSNsy5CL9TLwM3HpcV2kAyTNf2W1uUXs1jbeXGWjdWnsaqnUQ9PyWAYVhQ",
+      rootFingerprint: parent.rootFingerprint
+    })
   });
 });
 
@@ -142,10 +195,10 @@ describe("getBlindedXpub", () => {
     parent = nodes[parentPath];
     // depth below the parent path
     child = nodes["m/45'/0'/0'/0/0"];
-    (mockPaths.secureSecretPath as jest.Mock).mockReturnValue("m/0/0");
+    (mockPaths.secureSecretPath as Mock).mockReturnValue("m/0/0");
   });
 
-  afterAll(jest.restoreAllMocks);
+  afterAll(vi.restoreAllMocks);
   it("should return a random child key origin", async () => {
     const actual = await getBlindedXpub(parent.xpub);
     expect(actual.xpub).toEqual(child.xpub);

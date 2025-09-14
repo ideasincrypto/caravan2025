@@ -19,7 +19,17 @@ import {
   convertExtendedPublicKey,
   getMaskedDerivation,
   MultisigAddressType,
+  P2SH,
+  P2SH_P2WSH,
+  P2WSH,
+  BitcoinNetwork,
 } from "@caravan/bitcoin";
+import {
+  convertLegacyInput,
+  convertLegacyOutput,
+  getUnsignedMultisigPsbtV0,
+} from "@caravan/psbt";
+
 import {
   IndirectKeystoreInteraction,
   PENDING,
@@ -27,14 +37,7 @@ import {
   INFO,
   ERROR,
 } from "./interaction";
-import { P2SH, P2SH_P2WSH, P2WSH } from "@caravan/bitcoin";
-import { BitcoinNetwork } from "@caravan/bitcoin";
 import { WalletConfigKeyDerivation } from "./types";
-import {
-  convertLegacyInput,
-  convertLegacyOutput,
-  getUnsignedMultisigPsbtV0,
-} from "@caravan/psbt";
 
 export const COLDCARD = "coldcard";
 // Our constants use 'P2SH-P2WSH', their file uses 'P2SH_P2WSH' :\

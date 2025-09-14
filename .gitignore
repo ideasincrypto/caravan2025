@@ -43,3 +43,17 @@ yarn-error.log*
 
 .vscode/
 .idea/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+playwright-report
+#e2e
+/apps/coordinator/test-results
+/apps/coordinator/e2e/test-results
+/apps/coordinator/e2e/downloads
+/apps/coordinator/e2e/temp
+/apps/coordinator/e2e/uploads
+

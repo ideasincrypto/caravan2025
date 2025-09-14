@@ -1,6 +1,6 @@
 {
   "name": "@caravan/fees",
-  "version": "1.0.0-beta",
+  "version": "1.0.1",
   "description": "Utility library for fee bumping bitcoin transactions",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -8,9 +8,9 @@
   "private": true,
   "exports": {
     ".": {
-      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
@@ -18,9 +18,12 @@
     "ci": "npm run lint && npm run test",
     "dev": "npm run build -- --watch",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "test": "jest src/tests",
-    "test:watch": "jest --watch src",
-    "lint": "eslint src"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui --watch",
+    "lint": "eslint src",
+    "lint:fix": "eslint --fix src"
   },
   "keywords": [
     "bitcoin",
@@ -35,13 +38,9 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "@inrupt/jest-jsdom-polyfills": "^3.2.1",
-    "ts-jest": "^29.0.5",
-    "tsup": "^7.2.0",
-    "typescript": "^4.9.5",
     "@caravan/typescript-config": "*",
-    "esbuild-plugin-polyfill-node": "^0.3.0"
+    "prettier": "^3.2.5",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "@caravan/bitcoin": "*",

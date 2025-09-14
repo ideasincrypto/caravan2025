@@ -3,10 +3,14 @@
  * output and amounts.
  */
 
-import BigNumber from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 
-import { ZERO } from "./utils";
 import { validateAddress } from "./addresses";
+import { getP2SHOutputSize, P2SH } from "./p2sh";
+import { getP2SH_P2WSHOutputSize, P2SH_P2WSH } from "./p2sh_p2wsh";
+import { getP2WSHOutputSize, P2WSH } from "./p2wsh";
+import { MultisigAddressType } from "./types";
+import { ZERO } from "./utils";
 
 /**
  * Represents an output in a transaction.
@@ -82,7 +86,7 @@ const DUST_LIMIT_SATS = "546";
 export function validateOutputAmount(
   amountSats,
   maxSats?: number | string,
-  minSats: number | string | BigNumber = DUST_LIMIT_SATS
+  minSats: number | string | BigNumber = DUST_LIMIT_SATS,
 ) {
   let a, its;
   try {
@@ -116,4 +120,17 @@ export function validateOutputAmount(
     }
   }
   return "";
+}
+
+export function getOutputSize(scriptType: MultisigAddressType) {
+  switch (scriptType) {
+    case P2SH:
+      return getP2SHOutputSize();
+    case P2WSH:
+      return getP2WSHOutputSize();
+    case P2SH_P2WSH:
+      return getP2SH_P2WSHOutputSize();
+    default:
+      throw new Error(`Unsupported script type: ${scriptType}`);
+  }
 }

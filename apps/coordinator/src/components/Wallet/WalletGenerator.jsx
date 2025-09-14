@@ -7,6 +7,7 @@ import {
   ExtendedPublicKey,
   generateBraid,
 } from "@caravan/bitcoin";
+import { ClientType } from "@caravan/clients";
 import {
   Button,
   Card,
@@ -20,7 +21,6 @@ import {
   Box,
 } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { ClientType } from "@caravan/clients";
 import ClientPicker from "../ClientPicker";
 import ConfirmWallet from "./ConfirmWallet";
 import RegisterWallet from "./RegisterWallet";
@@ -79,7 +79,12 @@ class WalletGenerator extends React.Component {
       configuring,
     } = this.props;
     const { unknownClient } = this.state;
-    if (client.type === "unknown" && prevProps.client.type === "public") {
+    if (
+      client.type === "unknown" &&
+      (prevProps.client.type === "public" ||
+        prevProps.client.type === ClientType.MEMPOOL ||
+        prevProps.client.type === ClientType.BLOCKSTREAM)
+    ) {
       this.setState({ unknownClient: true });
     } else if (configuring && client.type !== "unknown" && unknownClient) {
       // re-initializes the state if we're in the configuring stage.
@@ -366,7 +371,11 @@ class WalletGenerator extends React.Component {
     if (this.extendedPublicKeyCount() === totalSigners) {
       if (generating && !configuring) {
         return (
-          <WalletControl addNode={this.addNode} updateNode={this.updateNode} />
+          <WalletControl
+            addNode={this.addNode}
+            updateNode={this.updateNode}
+            refreshNodes={this.refreshNodes}
+          />
         );
       }
       if (!hasConflict) {
@@ -464,13 +473,7 @@ class WalletGenerator extends React.Component {
                 variant="contained"
                 color="primary"
                 onClick={this.generate}
-                disabled={
-                  ![
-                    "public",
-                    ClientType.MEMPOOL,
-                    ClientType.BLOCKSTREAM,
-                  ].includes(client.type) && !connectSuccess
-                }
+                disabled={client.type !== ClientType.PUBLIC && !connectSuccess}
               >
                 Confirm
               </Button>
